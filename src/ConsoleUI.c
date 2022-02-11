@@ -283,6 +283,12 @@ ATMCard inputCard()
     getPinCode(card.PinCode);
     printf(" Input balance:      ");
     card.Balance = getMoney("Input balance");
+    while (card.Balance < 50000)
+    {
+        printf(" Account balance greater than or equal 50.000 VND!\n");
+        printf("Re-enter balance: ");
+        card.Balance = getMoney("Input balance");
+    }
     printLine('-', LENGTH_LINE);
     return card;
 }
