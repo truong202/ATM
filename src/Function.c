@@ -227,7 +227,7 @@ void priceFormat(long long n, char *str)
         strcat(str, numString);
         return;
     }
-    while (n > 1000)
+    while (n >= 1000)
     {
         sprintf(numString, "%03lld", n % 1000);
         strcat(str, strrev(numString));
