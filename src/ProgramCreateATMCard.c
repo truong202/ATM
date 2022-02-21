@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
         ATMCard card = inputCard();
         int result = createATMCard(card);
         printf(" Create ATM %s!\n", result == 1 ? "completed" : "not complete");
-        printf("Do you want to create ATM Card? (Y/N): ");
+        printf(" Do you want to create ATM Card? (Y/N): ");
         isContinue = getYN();
     } while (isContinue == 'Y' || isContinue == 'y');
 

@@ -5,7 +5,7 @@
 #include <string.h>
 #include "Model.c"
 
-const char *FILE_NAME = "ATMCards.dat";
+const char *FILE_NAME = "account-number.dat";
 
 int createATMCard(ATMCard card);
 int login(char *accountNo, char *pinCode, ATMCard *card);
@@ -77,7 +77,9 @@ int withdrawal(Receipt receipt)
         return 0;
     if (cards[index].Balance < receipt.Money)
         return 0;
-    cards[index].Balance -= receipt.Money;
+    long long fees = receipt.Money * FEES;
+    long long vat = receipt.Money * VAT;
+    cards[index].Balance = cards[index].Balance - receipt.Money - fees - vat;
     return writeToFile(cards, count, FILE_NAME);
     return 0;
 }
@@ -97,7 +99,9 @@ int transfers(Transaction trans)
         return 0;
     if (trans.Money > cards[index].Balance)
         return 0;
-    cards[index].Balance -= trans.Money;
+    long long fees = trans.Money * FEES;
+    long long vat = trans.Money * VAT;
+    cards[index].Balance = cards[index].Balance - trans.Money - vat - fees;
     index = findIndex(trans.Recipient.AccountNo, cards, count);
     if (index == -1)
         return 0;
@@ -134,6 +138,7 @@ int getCard(char *accountNo, ATMCard *card)
     }
     return 0;
 }
+
 int findIndex(char *accountNo, ATMCard *cards, int count)
 {
     for (int i = 0; i < count; i++)

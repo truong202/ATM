@@ -1,6 +1,9 @@
 #pragma once
 #include <time.h>
 
+#define VAT 0.0001
+#define FEES 0.001;
+
 typedef struct ATMCard
 {
     char AccountNo[20];

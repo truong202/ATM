@@ -41,7 +41,6 @@ int loginUI(ATMCard *card)
         getNumberString(accountNo, 14, "account No");
         printf(" Pin Code: ");
         getPinCode(pinCode);
-        printf("%s\n", accountNo);
         result = login(accountNo, pinCode, card);
         if (!result)
         {
@@ -120,7 +119,6 @@ void withdrawalUI(ATMCard card)
             isPrint = getYN();
             if (isPrint == 'y' || isPrint == 'Y')
             {
-                receipt.Card.Balance -= money;
                 printWithdrawalReceipt(receipt);
             }
         }
@@ -134,6 +132,9 @@ void printWithdrawalReceipt(Receipt receipt)
 {
     char *accountNo;
     char price[50];
+    long long fees = receipt.Money * FEES;
+    long long vat = receipt.Money * VAT;
+    getCard(receipt.Card.AccountNo, &receipt.Card);
     strcpy(accountNo, receipt.Card.AccountNo);
     for (int i = 4; i < 10; i++)
     {
@@ -152,8 +153,12 @@ void printWithdrawalReceipt(Receipt receipt)
     priceFormat(receipt.Card.Balance, price);
     strcat(price, " VND");
     printf(" So du: %31s\n", price);
-    printf(" Le phi: %30s\n", "1.000 VND");
-    printf(" VAT: %33s\n", "100 VND");
+    priceFormat(fees, price);
+    strcat(price, " VND");
+    printf(" Le phi: %30s\n", price);
+    priceFormat(vat, price);
+    strcat(price, " VND");
+    printf(" VAT: %33s\n", price);
     printLine('-', LENGTH_LINE);
     writeTextCenter("Cam on quy khach da su dung", LENGTH_LINE);
     writeTextCenter("dich vu cua chung toi!", LENGTH_LINE);
@@ -218,6 +223,9 @@ void transfersUI(ATMCard card)
 void printTransfersReceipt(Transaction trans)
 {
     char price[50];
+    long long fees = trans.Money * FEES;
+    long long vat = trans.Money * VAT;
+    getCard(trans.Sender.AccountNo, &trans.Sender);
     printTitle("BIEN LAI CHUYEN TIEN TAI ATM");
     printf(" Ngay: %02d/%02d/%d            Gio: %02d:%02d\n", trans.Date->tm_mday, trans.Date->tm_mon + 1,
            trans.Date->tm_year, trans.Date->tm_hour, trans.Date->tm_min);
@@ -229,9 +237,12 @@ void printTransfersReceipt(Transaction trans)
     printf(" So tien: %29s\n", price);
     printf(" Noi dung: %28s\n", "Chuyen tien tai ATM");
     printLine('-', LENGTH_LINE);
+    priceFormat(fees, price);
     strcat(price, " VND");
-    printf(" Le phi: %30s\n", "1000");
-    printf(" VAT: %33s\n", "100");
+    printf(" Le phi: %30s\n", price);
+    priceFormat(vat, price);
+    strcat(price, " VND");
+    printf(" VAT: %33s\n", price);
     printLine('-', LENGTH_LINE);
     writeTextCenter("Cam on quy khach da su dung", LENGTH_LINE);
     writeTextCenter("dich vu cua chung toi!", LENGTH_LINE);
@@ -286,8 +297,8 @@ ATMCard inputCard()
     while (card.Balance < 50000)
     {
         printf(" Account balance greater than or equal 50.000 VND!\n");
-        printf("Re-enter balance: ");
-        card.Balance = getMoney("Input balance");
+        printf(" Re-enter balance: ");
+        card.Balance = getMoney("Input Money");
     }
     printLine('-', LENGTH_LINE);
     return card;
